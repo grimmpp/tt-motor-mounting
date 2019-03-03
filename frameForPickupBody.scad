@@ -27,11 +27,11 @@ axle();
 translate([-182,0,0]) axle();
 //*/
 
-/* both motor platforms
+//* both motor platforms
     motorPlatforms();
 //*/
 
-/* battery box - sits between both platforms
+//* battery box - sits between both platforms
     //translate(bb_pos) batteryBox();
     translate([-50,(pl_length-bb_length)/2,4]) rotate([0,0,90]) batteryBox();
 //*/
