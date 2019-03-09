@@ -1,4 +1,6 @@
 
+//file version 1.0
+
 //motor case dimensions
 m_length = 39.8;
 m_depth = 19+3+2.6;
