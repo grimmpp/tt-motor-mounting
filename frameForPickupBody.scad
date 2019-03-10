@@ -32,20 +32,20 @@ plateWidth = pl_length-22;
 carBody();
 //*/
 
-/*  //arduino board
+//*  //arduino board
 eBoards();
 //*/
 
-/*  // axles
+//*  // axles
 axle();
 translate([-t_length-12,0,0]) axle();
 //*/
 
-/* // both motoplatforms
+//* // both motoplatforms
 motorPlatforms();
 //*/
 
-/* // battery box
+//* // battery box
 translate(bb_pos) batteryBox();
 
 //*/
