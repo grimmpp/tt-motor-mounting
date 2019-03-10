@@ -1,5 +1,5 @@
 
-//file version 1.0
+//file version 1.1
 
 //motor case dimensions
 m_length = 39.8;
@@ -9,33 +9,45 @@ m_depth = 19+3+2.6;
 pl_length=100;
 
 //tolal length
-t_length = 170;
+t_length = 170-1;
 
 //motor platform positions
 m1_pos = [-m_length,0,-27];
 m2_pos = [-t_length,0,-27];
+
+bodySupportFront_pos = [-173.5,pl_length/2,0];
+bodySupportRear_pos = [-44,33.5,0];
 
 //battery box dimensions
 bb_length=75;
 bb_width=40;
 bb_height=20;
 
-bb_pos = [-75-m_length+7.6,50-40/2,-20-4];
+bb_pos = [-pl_length/2-bb_width,(pl_length-bb_length)/2,4];
 
-//* 
+plateWidth = pl_length-22;
+
+// other parts to get a picture of the whole car
+/* // car body
 carBody();
+//*/
+
+/*  //arduino board
 eBoards();
+//*/
+
+/*  // axles
 axle();
-translate([-182,0,0]) axle();
+translate([-t_length-12,0,0]) axle();
 //*/
 
-//* both motor platforms
-    motorPlatforms();
+/* // both motoplatforms
+motorPlatforms();
 //*/
 
-//* battery box - sits between both platforms
-    //translate(bb_pos) batteryBox();
-    translate([-50,(pl_length-bb_length)/2,4]) rotate([0,0,90]) batteryBox();
+/* // battery box
+translate(bb_pos) batteryBox();
+
 //*/
 
 
@@ -57,52 +69,65 @@ difference(){
 //frame
 union(){
     
-    
-    /* bottom plate
-    union() {
-    translate([-t_length,pl_length/2-20,-4]) cube([t_length-m_length,40,4]);
-    translate([-t_length-12.5,pl_length/2-20,-8]) cube([t_length-15,40,4]);
-    }
-    //*/
-    
 //car body mountings | rear
-translate([-44,33.5,0]) {
-    hull() {
-        cylinder($fn=50, d=8, h=39.4-3);
-        translate([0,32.4,0]) cylinder($fn=50, d=8, h=39.4-3);
-    }
-}
-
+bodySupportRear();
 //car body mountings | front
-translate([-173.5,33.5,0]) {
-    hull() { 
-        cylinder($fn=50, d=8, h=46-2);
-        translate([4,0,0]) cylinder($fn=50, d=8, h=46-2);
-    }
-    translate([0,32.4,0]) hull() {
-        cylinder($fn=50, d=8, h=46-2);
-        translate([4,0,0]) cylinder($fn=50, d=8, h=46-2);
-    }
-}
-translate([-173.5+4,33.5,0]) {
-    hull() {
-        cylinder($fn=50, d=8, h=46-2);
-        translate([0,32.4,0]) cylinder($fn=50, d=8, h=46-2);
-    }
-}
+bodySupportFront();
+    
+arduinoSupport();
     
 //base plate
-translate([-t_length-m_length+4,11,0]) cube([t_length+m_length-8,pl_length-22,4]);
+translate([-t_length-m_length+4,11,0]) {
+    cube([t_length+m_length-8,plateWidth,4]);
+    
+    translate([0,0,4]) cube([t_length+m_length-8,10,2]);
+    translate([0,plateWidth-10,4]) cube([t_length+m_length-8,10,2]);
+    translate([0,(plateWidth-10)/2,4]) cube([t_length+m_length-8,10,2]);
+}
+//*/
 
 }//union
 
-//holes
+color("red") {
+
+//holes for motor platforms (axles)
 translate([-m_length,0,-27-4.5]) mountingHoles();
 translate([-t_length-m_length+2,0,-27-4.5]) mountingHoles();
 
 //arduino uno holes
-translate([-150,20,-4])
-rotate([0,0,0]) {
+arduinoBoardHoles();
+
+//holes for motor cables
+cableHoles();
+
+
+//battery box holes
+translate(bb_pos) batteryBoxHoles();
+
+// body connection hole
+bodyMountHolesFront();
+bodyMountHolesRear();
+
+}//color("red")
+}//difference
+
+module cableHoles() {
+    translate([-m_length-bb_width-13, 20, -20]) cylinder($fn=50, d=5, h=50);
+translate([-m_length-bb_width-13, pl_length-20, -20]) cylinder($fn=50, d=5, h=50);
+translate([-t_length+10, 20, -20]) cylinder($fn=50, d=5, h=50);
+translate([-t_length+10, pl_length-20, -20]) cylinder($fn=50, d=5, h=50);
+}
+
+module arduinoSupport() {
+    translate([-150,20,0])
+    for(i = unoHoles) {
+        translate(i)
+        cylinder($fn=32, d=12, h=6);
+    }
+}
+
+module arduinoBoardHoles() {
+    translate([-150,20,-5])
     for(i = unoHoles) {
         translate(i) color("red") {
         cylinder($fn=32, d=3.2, h=12);
@@ -111,25 +136,92 @@ rotate([0,0,0]) {
     }
 }
 
-//battery box holes
-translate([-50,(pl_length-bb_length)/2,0])
-//translate([-49,10,0]) 
-color("red") rotate([0,0,90]) batteryBoxHoles();
+module bodySupportFront() {
+    //support height
+    sh2=47-2;
+    c=20;
+    
+    //top part | position is independent of total length (t_length)
+    translate(bodySupportFront_pos)
+    hull() {
+        _sh=10;
+        translate([6,-c,sh2-_sh]) cylinder($fn=50, d=8, h=_sh);
+        translate([-2,-c,sh2-_sh]) cylinder($fn=50, d=8, h=_sh);
+        translate([6,c,sh2-_sh]) cylinder($fn=50, d=8, h=_sh);
+        translate([-2,c,sh2-_sh]) cylinder($fn=50, d=8, h=_sh);
+        
+        translate([6,c,30]) cylinder($fn=50, d=8, h=4);
+        translate([6,-c,30]) cylinder($fn=50, d=8, h=4);
+    }
 
-// body connection hole | front
-color("red") translate([-173.5,33.5,44-18]) {
-    cylinder($fn=50, d=3, h=20);
-    translate([0,32.4,0]) cylinder($fn=50, d=3, h=20);
+    translate([-t_length-3.5,pl_length/2,0]) {   
+    //long stand
+    hull() {
+        translate([6,c,0]) cylinder($fn=50, d=8, h=sh2);
+        translate([6,-c,0]) cylinder($fn=50, d=8, h=sh2);
+        translate([6,c+14,0]) cylinder($fn=50, d=8, h=4);
+        translate([6,-c-14,0]) cylinder($fn=50, d=8, h=4);
+    }
+    //short cross stand
+    hull() {
+        translate([-20,0,0]) cylinder($fn=50, d=8, h=4);
+        translate([4,0,0]) cylinder($fn=50, d=8, h=sh2);
+        translate([16,0,0]) cylinder($fn=50, d=8, h=4);
+    }
+    }
 }
-// body connection hole | rear
-color("red") translate([-44,33.5,39.4-3-18]) {
-    cylinder($fn=50, d=3, h=20);
-    translate([0,32.4,0]) cylinder($fn=50, d=3, h=20);
+
+module bodyMountHolesFront() {
+    bs_d=3.3;
+    // body connection hole | front
+    translate([-173.5,33.5,44]) {
+        //screw holes
+        translate([0,0,-25])cylinder($fn=50, d=bs_d, h=30);
+        translate([0,32.4,-25]) cylinder($fn=50, d=bs_d, h=30);
+        //nut holes
+        translate([0,0,-1.8]) rotate([0,0,30]) cylinder($fn=6, r=3.4, h=3);
+        translate([0,32.4,-1.8]) rotate([0,0,30]) cylinder($fn=6, r=3.4, h=3);
+    }
 }
 
-}//difference
+module bodySupportRear() {
+    //spport height
+sh1=40.4-3;
+translate(bodySupportRear_pos) {
+    hull() {
+        cylinder($fn=50, d=8, h=sh1);
+        translate([0,32.4,0]) cylinder($fn=50, d=8, h=sh1);
+        
+        translate([0,32.4+18,0]) cylinder($fn=50, d=8, h=4);
+        translate([0,-18,0]) cylinder($fn=50, d=8, h=4);
+    }
+    hull() {
+        translate([0,32.4/2,0]) cylinder($fn=50, d=8, h=sh1);
+        translate([20,32.4/2,0]) cylinder($fn=50, d=8, h=4);
+    }
+    hull() {
+    translate([0,0,sh1-10]) cylinder($fn=50, d2=16, d1=8, h=10);
+    translate([0,32.4,sh1-10]) cylinder($fn=50, d2=16, d1=8, h=10);
+    }
+}
+}
 
-
+module bodyMountHolesRear() {
+    bs_d=3.3;
+    // body connection hole | rear
+    translate([-44,33.5,39.4-3-16]) {
+        //screw holes
+        cylinder($fn=50, d=bs_d, h=22);
+        translate([0,32.4,0]) cylinder($fn=50, d=bs_d, h=22);
+        
+        //nut holes
+        translate([0,0,19-3.2-1.6]) 
+            rotate([0,0,30]) cylinder($fn=6, r=3.4, h=3);
+        
+        translate([0,32.4,19-3.2-1.6]) 
+            rotate([0,0,30]) cylinder($fn=6, r=3.4, h=3);
+    }
+}
 
 module motorPlatforms() {
     color("lightblue") {
@@ -145,25 +237,25 @@ module motorPlatforms() {
 
 
 module batteryBox(){
-    
+    color("lightgreen")
+    translate([0,0,2])
     difference(){
-        color("lightgreen")
-        cube([bb_length,bb_width,bb_height]);
-        
-        batteryBoxHoles();
+        cube([bb_width,bb_length,bb_height]);       
+        translate([2,2,2]) cube([bb_width-4,bb_length-4,bb_height+2]);
+        color("blue") batteryBoxHoles();
     }
 }
 
 module batteryBoxHoles() {
-    translate([bb_length/2,10,-1]) {
-        cylinder($fn=32, d=3.2, h=bb_height+2);
+    translate([10,bb_length/2,-5]) {
+        cylinder($fn=32, d=3.2, h=bb_height+8);
         cylinder($fn=6, h=3,r=3.3);
     }
 
-    translate([bb_length/2,30,-1]) {
-        cylinder($fn=32, d=3.2, h=bb_height+2);
+    translate([30,bb_length/2,-5]) {
+        cylinder($fn=32, d=3.2, h=bb_height+8);
         cylinder($fn=6, h=3,r=3.3);
-    }
+    }  
 }
 
 //mounting holes
@@ -194,12 +286,12 @@ module mountingHoles(){
 }
 
 
-module crossbar() {
-    cube([8,pl_length-2*m_depth,4]);
-}
 
 module carBody() {
-    color("lightblue") translate([-92,114,36]) rotate([0,0,90]) import("./pickupBody/wholeBody.stl");
+    color("lightblue") 
+    translate([-92,114,36+1]) 
+    rotate([0,0,90]) 
+    import("./pickupBody/wholeBody.stl");
 }
 
 module axle() {
@@ -211,5 +303,7 @@ module axle() {
 }
 
 module eBoards() {
-    translate([-150,14,4]) color("lightgreen") cube([54,77,32]);
+    translate([-150,14,4+2]) 
+    color("lightgreen") 
+    cube([54,77,32]);
 }
