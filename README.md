@@ -19,3 +19,4 @@ Requires the following parts:
   <li>1x <a href="pickupBody/King_URSA_Center_Body_Piece3.stl">King_URSA_Center_Body_Piece3.stl</a></li>
   <li>1x <a href="pickupBody/King_URSA_Rear_Body_Piece.stl">King_URSA_Rear_Body_Piece.stl</a></li>
 </ul>
+You can also find this project on Thingiverse: https://www.thingiverse.com/thing:3483392
