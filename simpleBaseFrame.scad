@@ -20,12 +20,13 @@ bb_height=20;
 
 bb_pos = [-75-m_length+7.6,50-40/2,-20-4];
 
+cornerHoles = true;
 
-//* both motor platforms
+/* both motor platforms
     motorPlatforms();
 //*/
 
-//* battery box - sits between both platforms
+/* battery box - sits between both platforms
     translate(bb_pos) batteryBox();
 //*/
 
@@ -74,6 +75,14 @@ translate([-133.8,(15.24+13.97)/2+10-5,0]) cube([139.8-12,10,4]);
 //holes
 translate([-m_length,0,-27]) mountingHoles();
 translate([-100-m_length+2,0,-27]) mountingHoles();
+
+//side holes
+if (cornerHoles) color("red") {
+translate([-133.8+4,66.04+10,-1]) cylinder($fn=32, d=3.2, h=12);
+translate([-133.8+4,(15.24+13.97)/2+10,-1]) cylinder($fn=32, d=3.2, h=12);
+translate([-14+4,66.04+10,-1]) cylinder($fn=32, d=3.2, h=12);
+translate([-14+4,(15.24+13.97)/2+10,-1]) cylinder($fn=32, d=3.2, h=12);
+}
 
 //arduino uno holes
 translate([-96,10,-4])
