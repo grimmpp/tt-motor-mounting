@@ -20,8 +20,8 @@ bb_height=20;
 
 bb_pos = [-75-m_length+7.6,50-40/2,-20-4];
 
-cornerHoles = true;
-batteryCrossbarHeight = 4;//8;
+cornerHoles = false; // true;
+batteryCrossbarHeight = 8; // 4;
 
 /* both motor platforms
     motorPlatforms();
@@ -56,11 +56,15 @@ translate([m1_pos[0],m_depth,0])  {
     translate([4,0,0]) crossbar();
 }
 
-//corssbars platform2
+//corssbars platform2 (steering)
 translate([m2_pos[0]+6,m_depth,0])  {
     translate([-18,0,0]) crossbar();
+    translate([-18,0,-4]) crossbar();
     translate([-m_length,0,0]) crossbar();
 }
+// extension for steering
+translate([-133.8-22,66.04+10-5-2,0]) cube([22,12,4]);
+translate([-133.8-22,(15.24+13.97)/2+10-5,0]) cube([22,12,4]);
 
 //corssbars center / battery box
 translate([bb_pos[0]+bb_length/2-5,m_depth-5,4-batteryCrossbarHeight]) {
@@ -71,11 +75,18 @@ translate([bb_pos[0]+bb_length/2-5,m_depth-5,4-batteryCrossbarHeight]) {
 translate([-133.8,66.04+10-5,0]) cube([139.8-12,10,4]);
 translate([-133.8,(15.24+13.97)/2+10-5,0]) cube([139.8-12,10,4]);
 
+
 }//union
 
 //holes
 translate([-m_length,0,-27]) mountingHoles();
 translate([-100-m_length+2,0,-27]) mountingHoles();
+
+//steeting extension
+color("red") translate([-t_length-30+.2-18,27.1,-4]) {
+    cylinder($fn=50, h=12,r=1.6);
+    translate([0,45.8,0]) cylinder($fn=50, h=12,r=1.6);
+}
 
 //side holes
 if (cornerHoles) color("red") {
